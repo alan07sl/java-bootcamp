@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.globant.domain.Product;
+import com.globant.exceptions.ResourceNotFoundException;
 import com.globant.notifications.ItemAddedEvent;
 import com.globant.notifications.ObservableProduct;
 import com.globant.notifications.PriceChangeEvent;
@@ -39,7 +40,7 @@ public class ProductService extends Observable {
 		return productRepository.findOne(id);
 	}
 
-	public void updateProduct(Product product) {
+	public void updateProduct(Product product) throws Exception {
 		if (productRepository.exists(product.getId())) {
 			// Getting the old product for creating the event of price changing
 			Product oldProduct = getProduct(product.getId());
@@ -59,7 +60,7 @@ public class ProductService extends Observable {
 				}
 			}
 		} else {
-			//TODO Return a page with a message and the correct httpStatus code
+			throw new ResourceNotFoundException(product.getId().toString());
 		}
 
 	}

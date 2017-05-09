@@ -37,7 +37,7 @@ public class ProductController {
 	}
 	
 	@RequestMapping(method = RequestMethod.PUT, value = BASE_URL)
-	public void updateProduct(@RequestBody Product product) {
+	public void updateProduct(@RequestBody Product product) throws Exception {
 		productService.updateProduct(product);
 	}
 
