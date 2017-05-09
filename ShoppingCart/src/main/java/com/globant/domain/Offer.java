@@ -3,13 +3,39 @@ package com.globant.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+
+@Entity(name = "offer")
+@DiscriminatorValue("offer")
 public class Offer extends Product {
 
-	public Offer(Integer id, Double price, String name) {
-		super(id,price, name);
+	//Cascade is necessary
+	@ManyToMany(cascade = CascadeType.ALL)
+	private List<Product> products = new ArrayList<Product>();
+
+	public Offer() {
+		super();
 	}
 
-	private List<Product> products = new ArrayList<Product>();
+	public List<Product> getProducts() {
+		return products;
+	}
+
+	public void setProducts(List<Product> products) {
+		this.products = products;
+	}
+
+	public Offer(Integer id, Double price, String name) {
+		super(id, price, name);
+	}
+
+	public Offer(Integer id, Double price, String name, List<Product> products) {
+		super(id, price, name);
+		this.products = products;
+	}
 
 	@Override
 	public Double calculatePrice() {

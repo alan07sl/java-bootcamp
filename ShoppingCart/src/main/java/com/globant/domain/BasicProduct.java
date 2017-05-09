@@ -1,6 +1,15 @@
 package com.globant.domain;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
+@Entity(name = "basicproduct")
+@DiscriminatorValue("basicproduct")
 public class BasicProduct extends Product {
+
+	public BasicProduct() {
+		super();
+	}
 
 	public BasicProduct(Integer id, Double price, String name) {
 		super(id, price, name);

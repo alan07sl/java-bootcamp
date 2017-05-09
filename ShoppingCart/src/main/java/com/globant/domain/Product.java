@@ -1,30 +1,40 @@
 package com.globant.domain;
 
-import java.util.Observable;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.Table;
 
-import com.globant.notifications.ObservableProduct;
-import com.globant.notifications.PriceChangeEvent;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 
-public abstract class Product extends Observable implements IProduct {
+//Json specs to map a list of objects of product inherited types.
+@JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = As.PROPERTY, property = "type")
+@JsonSubTypes({ @JsonSubTypes.Type(value = Offer.class, name = "offer"),
+		@JsonSubTypes.Type(value = BasicProduct.class, name = "basicprod") })
+@Entity
+@Table(name = "product")
+@Inheritance
+@DiscriminatorColumn(name = "type")
+public abstract class Product implements IProduct {
 
+	@Id
+	@GeneratedValue
 	private Integer id;
 	private Double price;
 	private String name;
-	private static ObservableProduct OBSERVABLE;
-	
-	static {
-		OBSERVABLE = new ObservableProduct();
-	}
-
-	public static Observable getObservable() {
-		return OBSERVABLE;
-	}
 
 	public Product(Integer id, Double price, String name) {
 		super();
 		this.price = price;
 		this.name = name;
 		this.id = id;
+	}
+
+	public Product() {
 	}
 
 	@Override
@@ -37,13 +47,7 @@ public abstract class Product extends Observable implements IProduct {
 	}
 
 	public void setPrice(Double price) {
-		PriceChangeEvent event = new PriceChangeEvent(this, this.price, price);
 		this.price = price;
-
-		synchronized (OBSERVABLE) {
-			OBSERVABLE.setChanged();
-			OBSERVABLE.notifyObservers(event);
-		}
 	}
 
 	public String getName() {
